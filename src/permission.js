@@ -1,7 +1,5 @@
 import router from './router'
-// import store from './store'
-// import { Message } from 'element-ui'
-import Auth from '@/utils/auth' // 验权
+import Auth from './utils/auth' // 验权
 const auth = new Auth()
 export const whiteList = ['/login'] // 不重定向白名单
 
