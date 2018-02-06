@@ -1,40 +1,28 @@
 import router from './router'
-import store from './store'
-import NProgress from 'nprogress' // Progress 进度条
-import 'nprogress/nprogress.css'// Progress 进度条样式
-import { Message } from 'element-ui'
-import { getToken } from '@/utils/auth' // 验权
+// import store from './store'
+// import { Message } from 'element-ui'
+import Auth from '@/utils/auth' // 验权
+const auth = new Auth()
+export const whiteList = ['/login'] // 不重定向白名单
 
-const whiteList = ['/login'] // 不重定向白名单
 router.beforeEach((to, from, next) => {
-  NProgress.start()
-  if (getToken()) {
-    if (to.path === '/login') {
-      next({ path: '/' })
-    } else {
-      if (store.getters.roles.length === 0) {
-        store.dispatch('GetInfo').then(res => { // 拉取用户信息
-          next()
-        }).catch(() => {
-          store.dispatch('FedLogOut').then(() => {
-            Message.error('验证失败,请重新登录')
-            next({ path: '/login' })
-          })
-        })
-      } else {
-        next()
-      }
+  console.log(auth.getToken())
+  // 到登录页面的都放行
+  if (whiteList.indexOf(to.path) >= 0) {
+    if (auth.getToken() !== null) {
+      router.push({ path: '/dashboard' })
+      return
     }
-  } else {
-    if (whiteList.indexOf(to.path) !== -1) {
-      next()
-    } else {
-      next('/login')
-      NProgress.done()
-    }
+    next()
+    return
   }
-})
-
-router.afterEach(() => {
-  NProgress.done() // 结束Progress
+  // 未登录
+  if (auth.getToken() === null) {
+    router.push({ path: '/login' })
+    next()
+    return
+  } else {
+    next()
+    return
+  }
 })

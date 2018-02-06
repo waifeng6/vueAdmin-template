@@ -1,9 +1,11 @@
-import { login, logout, getInfo } from '@/api/login'
-import { getToken, setToken, removeToken } from '@/utils/auth'
+import LoginApi from '../../api/login'
+import Auth from '../../utils/auth'
 
+const loginApi = new LoginApi()
+const auth = new Auth()
 const user = {
   state: {
-    token: getToken(),
+    token: auth.getToken(),
     name: '',
     avatar: '',
     roles: []
@@ -29,9 +31,9 @@ const user = {
     Login({ commit }, userInfo) {
       const username = userInfo.username.trim()
       return new Promise((resolve, reject) => {
-        login(username, userInfo.password).then(response => {
+        loginApi.login(username, userInfo.password).then(response => {
           const data = response.data
-          setToken(data.token)
+          auth.setToken(data.token)
           commit('SET_TOKEN', data.token)
           resolve()
         }).catch(error => {
@@ -43,7 +45,7 @@ const user = {
     // 获取用户信息
     GetInfo({ commit, state }) {
       return new Promise((resolve, reject) => {
-        getInfo(state.token).then(response => {
+        loginApi.getInfo(state.token).then(response => {
           const data = response.data
           commit('SET_ROLES', data.roles)
           commit('SET_NAME', data.name)
@@ -58,10 +60,10 @@ const user = {
     // 登出
     LogOut({ commit, state }) {
       return new Promise((resolve, reject) => {
-        logout(state.token).then(() => {
+        loginApi.logout(state.token).then(() => {
           commit('SET_TOKEN', '')
           commit('SET_ROLES', [])
-          removeToken()
+          auth.removeToken()
           resolve()
         }).catch(error => {
           reject(error)
@@ -73,7 +75,7 @@ const user = {
     FedLogOut({ commit }) {
       return new Promise(resolve => {
         commit('SET_TOKEN', '')
-        removeToken()
+        auth.removeToken()
         resolve()
       })
     }

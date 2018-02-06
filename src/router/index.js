@@ -22,9 +22,6 @@ import Layout from '../views/layout/Layout'
   }
 **/
 export const constantRouterMap = [
-  { path: '/login', component: () => import('@/views/login/index'), hidden: true },
-  { path: '/404', component: () => import('@/views/404'), hidden: true },
-
   {
     path: '/',
     component: Layout,
@@ -36,47 +33,68 @@ export const constantRouterMap = [
       component: () => import('@/views/dashboard/index')
     }]
   },
-
+  { path: '/login',
+    name: 'login',
+    component: () => import('@/views/login/index'),
+    hidden: true
+  },
+  { path: '/404',
+    component: () => import('@/views/404'),
+    hidden: true
+  },
   {
     path: '/example',
     component: Layout,
-    redirect: '/example/table',
     name: 'Example',
-    meta: { title: 'Example', icon: 'example' },
+    redirect: '/example/table',
+    meta: { title: '示例', icon: 'example' },
     children: [
       {
         path: 'table',
         name: 'Table',
-        component: () => import('@/views/table/index'),
+        component: () => import('@/views/example/table/index'),
         meta: { title: 'Table', icon: 'table' }
       },
       {
         path: 'tree',
         name: 'Tree',
-        component: () => import('@/views/tree/index'),
+        component: () => import('@/views/example/tree/index'),
         meta: { title: 'Tree', icon: 'tree' }
-      }
-    ]
-  },
-
-  {
-    path: '/form',
-    component: Layout,
-    children: [
+      },
       {
-        path: 'index',
+        path: 'form',
         name: 'Form',
-        component: () => import('@/views/form/index'),
+        component: () => import('@/views/example/form/index'),
         meta: { title: 'Form', icon: 'form' }
       }
     ]
   },
-
+  {
+    path: '/system',
+    component: Layout,
+    name: 'System',
+    redirect: '/system/departments',
+    meta: { title: '系统设置', icon: 'example' },
+    children: [
+      {
+        path: 'users',
+        name: 'Users',
+        component: () => import('@/views/system/users/index'),
+        meta: { title: '用户管理', icon: 'table' }
+      },
+      {
+        path: 'departments',
+        name: 'Departments',
+        component: () => import('@/views/system/departments/index'),
+        meta: { title: '部门管理', icon: 'table' }
+      }
+    ]
+  },
   { path: '*', redirect: '/404', hidden: true }
 ]
 
 export default new Router({
-  // mode: 'history', //后端支持可开
+  // mode: 'history', // 后端支持可开
   scrollBehavior: () => ({ y: 0 }),
   routes: constantRouterMap
 })
